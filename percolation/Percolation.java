@@ -16,22 +16,18 @@ import quickunion.QuickUnion;
  * @author gaprile
  */
 public class Percolation {
-
-   public final Site [][] ids;          
+         
    public final Site[]  idvs;
    public int dimension;
    private QuickUnionWeightedPathCompression quwpc;
-  //private QuickUnion quwpc;
-   
-   
+ 
    public Percolation(int n){                               // create n-by-n grid, with all sites blocked
    
        if(n<0)
            throw new java.lang.IllegalArgumentException();
        quwpc =  new QuickUnionWeightedPathCompression(2+n*n);
-      // quwpc =  new QuickUnion(2+n*n);
+    
        this.dimension = n;
-       ids = new Site[n][n];
        idvs = new Site[2+n*n];
 
        int k=0;
@@ -40,7 +36,6 @@ public class Percolation {
        
        for(int i=0;i < n;i++){
         for(int j=0;j < n;j++){
-           ids[i][j] = new Site();   
            idvs[k++] = new Site(); 
         } 
        }
@@ -64,13 +59,9 @@ public class Percolation {
         if((row<1)||(col<1)){
             throw new java.lang.IndexOutOfBoundsException();
         }
-        int r = row-1;
-        int c = col-1;
-        if(!ids[r][c].isOpen()){
-            ids[r][c].openSite();  ///->>>>>>>>> connect to open sites around up, dwn,left,right
-            int a = getPosistionFromRowCol(row,col);
+        int a = getPosistionFromRowCol(row,col);
+        if(!idvs[a].isOpen()){   
             idvs[a].openSite();
-
             if(row > 1){
                 if(idvs[getPosistionFromRowCol(row-1,col)].isOpen())
                     quwpc.union(getPosistionFromRowCol(row,col), getPosistionFromRowCol(row-1,col));
@@ -89,8 +80,7 @@ public class Percolation {
             }
             int p=getPosistionFromRowCol(row,col);
             if(quwpc.connected(p, 0)){
-                idvs[p].fillSite();
-                ids[r][c].fillSite();           
+                idvs[p].fillSite();         
             }
         }
    }   
@@ -98,10 +88,8 @@ public class Percolation {
         if((row<1)||(col<1)){
            throw new java.lang.IndexOutOfBoundsException();
         }
-        int r = row-1;
-        int c = col-1;
-        return  ids[r][c].isOpen();       //
-
+        int a = getPosistionFromRowCol(row,col);
+        return idvs[a].isOpen();
    }  
    public boolean isFull(int row, int col){    
         if((row<1)||(col<1)){
@@ -117,20 +105,14 @@ public class Percolation {
         }       
    }  
    public int count(){
-        int count =0;
+       int count =0;
        for (Site idv : idvs) {
            if(idv.isOpen())
             count++;
        }
-        return count;
+       return count;
    }
    public boolean percolates(){                             // does the system percolate?
-       
-
-        if(quwpc.connected(0, 1+dimension*dimension)){
-            return true;
-        }else{
-            return false;
-        }
+       return quwpc.connected(0, 1+dimension*dimension);
    }              
 }

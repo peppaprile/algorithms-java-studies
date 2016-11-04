@@ -15,19 +15,15 @@ public class PercolationClient {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-       
+      
         Random rand = new Random(); 
-        int cycle =0;
-        boolean res = false;
-        int N=64;
+        int N=640;
         Percolation pc = new Percolation(N);  // init 
         while(!pc.percolates()){
             int r = rand.nextInt(N)+1;
             int c = rand.nextInt(N)+1;
             if(!pc.isOpen(r, c)){        
              pc.open(r, c);
-             cycle++;
-
             }           
         }
         int c = pc.count();
@@ -38,7 +34,7 @@ public class PercolationClient {
                 String a = "[X]";
                 if(pc.isOpen(i+1,j+1)){
                     a = "[ ]";
-                }    
+                }
                 if(pc.isFull(i+1,j+1)){
                     a = "[@]";
                 }
